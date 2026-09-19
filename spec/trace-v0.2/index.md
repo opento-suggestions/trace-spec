@@ -1,13 +1,13 @@
-# TRACE Specification — Trust, Runtime Attestation, and Compliance Evidence
+# TRACE Specification: Trust, Runtime Attestation, and Compliance Evidence
 
-| Field                    | Value                                                                                            |
-| ------------------------ | ------------------------------------------------------------------------------------------------ |
-| Version                  | 0.2 — Draft                                                                                      |
-| Status                   | RFC — Request for Comments                                                                       |
-| Authors                  | Imran Siddique, Rishabh Poddar, Aaron Fulkerson (OPAQUE Systems)                                 |
-| Target announcement      | Confidential Computing Summit, San Francisco — 23 June 2026                                      |
-| Reference implementation | [agentrust-io/cmcp](https://github.com/agentrust-io/cmcp) — Confidential MCP                     |
-| License                  | Community Specification License 1.0 (see [LICENSE](https://trace.agentrust-io.com/spec/LICENSE)) |
+| Field                    | Value                                                                                                             |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------- |
+| Version                  | 0.2: Draft                                                                                                        |
+| Status                   | RFC: Request for Comments                                                                                         |
+| Authors                  | Imran Siddique, Rishabh Poddar, Aaron Fulkerson (OPAQUE Systems)                                                  |
+| Target announcement      | Confidential Computing Summit, San Francisco: 23 June 2026                                                        |
+| Reference implementation | [agentrust-io/cmcp](https://github.com/agentrust-io/cmcp): Confidential MCP                                       |
+| License                  | Community Specification License 1.0 (see [LICENSE](https://github.com/agentrust-io/trace-spec/blob/main/LICENSE)) |
 
 > **Note:** This is a pre-ratification draft. Fields, wire formats, and conformance requirements are subject to change before v1.0. Send feedback to: open an issue on this repository.
 
@@ -31,7 +31,7 @@ ______________________________________________________________________
 
 TRACE (Trust, Runtime Attestation, and Compliance Evidence) defines an open, portable, hardware-attested governance record for AI agents and other confidential workloads. It binds *what executed* (model, code, runtime), *under what policy*, *on what data class*, *invoking which tools*, into a single signed artifact rooted in silicon attestation. The record travels with the workload across hosts, clouds, and providers and is verifiable offline by any party.
 
-TRACE composes existing standards rather than replacing them. It profiles RATS/EAT (RFC 9711) for the wire envelope, SLSA for build-time provenance, SCITT for transparency anchoring, SPIFFE for workload identity, EAR for evidence appraisal, and MCP / A2A for the agent execution surface. Where gaps exist — notably the AI-agent execution profile — TRACE proposes the minimum new schema to close them.
+TRACE composes existing standards rather than replacing them. It profiles RATS/EAT (RFC 9711) for the wire envelope, SLSA for build-time provenance, SCITT for transparency anchoring, SPIFFE for workload identity, EAR for evidence appraisal, and MCP / A2A for the agent execution surface. Where gaps exist, notably the AI-agent execution profile, TRACE proposes the minimum new schema to close them.
 
 The first reference build is **Confidential MCP (cMCP)**: runtime attestation, policy enforcement, and signed evidence at the Model Context Protocol boundary, on Intel TDX, AMD SEV-SNP, and NVIDIA H100/Blackwell confidential GPUs.
 
@@ -43,22 +43,22 @@ AI builders shipping agents into regulated environments hit the same wall at eve
 
 > *"How do you prove the agent handled our data according to policy?"*
 
-The vocabulary lags the system. Auditors still say *the model* because that is the language that has been in use since before agents existed. What they are actually asking about — and what the AI builder owes them — is the entire agent execution: the model invocation, the tools the agent called, the data classes it touched at each step, and the policies that bound the whole sequence.
+The vocabulary lags the system. Auditors still say *the model* because that is the language that has been in use since before agents existed. What they are actually asking about, and what the AI builder owes them, is the entire agent execution: the model invocation, the tools the agent called, the data classes it touched at each step, and the policies that bound the whole sequence.
 
-The wall is not technical capability — it is evidence. AI builders today produce policy documents, SOC reports, vendor self-attestation, and mutable application logs. None prove what actually happened during execution, so review cycles stretch from days into months.
+The wall is not technical capability: it is evidence. AI builders today produce policy documents, SOC reports, vendor self-attestation, and mutable application logs. None prove what actually happened during execution, so review cycles stretch from days into months.
 
-| Layer                          | What exists                                                                                   | What is missing                                                                  |
-| ------------------------------ | --------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| Static documentation           | Model Cards, Data Cards, AIBOMs (SPDX 3.0 / CycloneDX 1.7)                                    | No runtime binding — diverges from deployed reality                              |
-| Operational tracking           | MLflow, W&B, vendor logs                                                                      | Self-reported, mutable, no tamper evidence                                       |
-| Hardware attestation           | NVIDIA NRAS, Intel Trust Authority, AMD SEV-SNP, AWS Nitro, Azure MAA, GCP Confidential Space | Proves the environment is genuine — no governance, policy, or data-class binding |
-| Content provenance             | C2PA Content Credentials                                                                      | Proves content origin — silent on inference execution                            |
-| Compliance frameworks          | NIST AI RMF, ISO 42001, EU AI Act Annex IV / Article 12                                       | Mandate documentation; no prescribed cryptographic format                        |
-| **Execution governance proof** | **Vendor-proprietary artifacts**                                                              | **No open, portable, vendor-neutral standard exists**                            |
+| Layer                          | What exists                                                                                   | What is missing                                                                 |
+| ------------------------------ | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
+| Static documentation           | Model Cards, Data Cards, AIBOMs (SPDX 3.0 / CycloneDX 1.7)                                    | No runtime binding: diverges from deployed reality                              |
+| Operational tracking           | MLflow, W&B, vendor logs                                                                      | Self-reported, mutable, no tamper evidence                                      |
+| Hardware attestation           | NVIDIA NRAS, Intel Trust Authority, AMD SEV-SNP, AWS Nitro, Azure MAA, GCP Confidential Space | Proves the environment is genuine: no governance, policy, or data-class binding |
+| Content provenance             | C2PA Content Credentials                                                                      | Proves content origin: silent on inference execution                            |
+| Compliance frameworks          | NIST AI RMF, ISO 42001, EU AI Act Annex IV / Article 12                                       | Mandate documentation; no prescribed cryptographic format                       |
+| **Execution governance proof** | **Vendor-proprietary artifacts**                                                              | **No open, portable, vendor-neutral standard exists**                           |
 
 The result: every regulated AI deployment re-litigates trust at every host boundary. Each cloud, each model provider, each agent framework ships its own evidence shape. Auditors cannot compare. Verifiers cannot federate. Workloads cannot move.
 
-The EU AI Act mandates tamper-evident logging for high-risk AI (Article 12); under the current provisional timeline those obligations apply from around December 2027. Frameworks already in force — DORA for financial entities, HIPAA for healthcare — carry equivalent audit-trail requirements today. Autonomous agents inside critical infrastructure are landing before the standard exists to govern them.
+The EU AI Act mandates tamper-evident logging for high-risk AI (Article 12); under the current provisional timeline those obligations apply from around December 2027. Frameworks already in force, DORA for financial entities, HIPAA for healthcare, carry equivalent audit-trail requirements today. Autonomous agents inside critical infrastructure are landing before the standard exists to govern them.
 
 ______________________________________________________________________
 
@@ -68,7 +68,7 @@ TRACE is sound only against named adversaries and named failure modes, under nam
 
 ### 2.1 The three questions an AI builder cannot answer today
 
-1. **What actually ran?** Not what was deployed. Not what the manifest says. *What was loaded into memory and executed at the moment the customer's data was processed* — model weights digest, agent code, dependency tree, runtime image, policy bundle — bound together cryptographically and reproducibly verifiable by an outside party.
+1. **What actually ran?** Not what was deployed. Not what the manifest says. *What was loaded into memory and executed at the moment the customer's data was processed*, model weights digest, agent code, dependency tree, runtime image, policy bundle, bound together cryptographically and reproducibly verifiable by an outside party.
 1. **What did it actually do?** Which tools the agent called. With what parameters. Against what data class. With what response. In what order. Across how many agent hops. Software-layer telemetry is self-reported and mutable. *Scope: TRACE captures invocations crossing a protocol boundary (MCP, A2A, and other instrumented surfaces). Functions embedded inside the deployed binary fall outside `tool_transcript` and are bound only by `build_provenance` and `model`.*
 1. **What rules were actually in force?** Not the policy on the document. *The policy bundle hash bound to the workload at execution time, with the enforcement mode it ran under*, verifiable independently of the workload that ran it.
 
@@ -81,7 +81,7 @@ Each question maps to a Trust Record claim:
 ### 2.2 Adversary classes in scope
 
 - **The agent itself, under autonomy.** AI agents are non-deterministic. They may invoke tools, route data, and act in ways no software policy anticipated under prompt injection, goal hijack, alignment drift, tool misuse, or routine non-determinism. TRACE does not prevent misbehavior. It makes misbehavior crossing a protocol boundary visible at the moment of execution.
-- **Cloud or infrastructure operator with root.** A privileged operator on the host — CSP staff, data center personnel, a compromised hypervisor, or a co-tenant that escapes isolation. Cannot be trusted to honor policy or to report execution faithfully.
+- **Cloud or infrastructure operator with root.** A privileged operator on the host: CSP staff, data center personnel, a compromised hypervisor, or a co-tenant that escapes isolation. Cannot be trusted to honor policy or to report execution faithfully.
 - **Compromised orchestration layer.** A kubelet, container runtime, or control plane that may substitute, restart, or steer the workload it schedules.
 - **Malicious or compromised dependency.** A poisoned model artifact, agent package, container base image, or transitive build-chain dependency.
 - **Colluding verifier or issuer.** A relying party that may collude with the issuer to fabricate evidence.
@@ -101,7 +101,7 @@ TRACE does not protect against:
 
 - TEE side-channel attacks (cache, timing, speculative execution, power analysis).
 - Compromise or coercion of a silicon root vendor or transparency log operator.
-- Model behavior — prompt injection, jailbreaks, hallucination, alignment drift. TRACE proves what executed and which countermeasures were in force; it does not adjudicate whether the model's output was correct.
+- Model behavior: prompt injection, jailbreaks, hallucination, alignment drift. TRACE proves what executed and which countermeasures were in force; it does not adjudicate whether the model's output was correct.
 - Availability and denial-of-service.
 - UX-layer attacks against the human in the loop.
 
@@ -121,12 +121,13 @@ The Trust Record is the unit of evidence. All fields are required unless marked 
 | `policy`           | Bound policy set hash + enforcement mode. `enforcement_mode` MUST default to `enforce`; a deployment MUST explicitly configure `silent` mode.                                                                                                                                                   | Policy artifact hash sealed to TEE measurement          |
 | `data_class`       | Classification of inputs and outputs                                                                                                                                                                                                                                                            | Classification label bound to per-call execution        |
 | `tool_transcript`  | MCP / A2A tool calls invoked, parameters classified, responses filtered                                                                                                                                                                                                                         | MCP / A2A protocol transcripts bound to TEE measurement |
-| `origin`           | OPTIONAL. Where the evidence came from, when that is not this runtime. See §3.1.1.                                                                                                                                                                                                              | —                                                       |
-| `references`       | OPTIONAL. Facts outside this record that it points at. Assurance-neutral: see §3.1.2.                                                                                                                                                                                                           | —                                                       |
+| `origin`           | OPTIONAL. Where the evidence came from, when that is not this runtime. See §3.1.1.                                                                                                                                                                                                              | :                                                       |
+| `references`       | OPTIONAL. Facts outside this record that it points at. Assurance-neutral: see §3.1.2.                                                                                                                                                                                                           | :                                                       |
+| `reproducibility`  | OPTIONAL. Claim that a named deterministic function of the run, re-executed over a pinned input closure, yields a transcript with the stated digest. See §3.1.4.                                                                                                                                | :                                                       |
 | `build_provenance` | How the running code and model were built                                                                                                                                                                                                                                                       | SLSA Provenance v1.0                                    |
-| `appraisal`        | Verifier's appraisal of evidence                                                                                                                                                                                                                                                                | EAR (EAT Attestation Results)                           |
+| `appraisal`        | Verifier's appraisal of evidence. Carries `method` and a per-method result when the verifier re-executed a reproducibility claim: see §3.1.4.                                                                                                                                                   | EAR (EAT Attestation Results)                           |
 | `transparency`     | Inclusion proof on append-only log                                                                                                                                                                                                                                                              | SCITT Receipt URI                                       |
-| `cnf`              | Confirmation key — binds record to TEE-held signing key                                                                                                                                                                                                                                         | EAT `cnf` claim (RFC 8747)                              |
+| `cnf`              | Confirmation key: binds record to TEE-held signing key                                                                                                                                                                                                                                          | EAT `cnf` claim (RFC 8747)                              |
 | `eat_profile`      | Profile URI identifying this as a TRACE v0.2 record                                                                                                                                                                                                                                             | EAT profile claim                                       |
 | `iat`              | Issued-at timestamp (Unix epoch)                                                                                                                                                                                                                                                                | EAT standard claim                                      |
 | `signature`        | OPTIONAL as a record field: embedded signature by the `cnf` key over the canonical record (section 3.2.2). Profiles using an enveloping signature (JWS, COSE, cMCP RuntimeClaim) omit this field and carry the signature in the envelope. The signature binding itself is mandatory either way. | JWS / COSE signature over canonical JSON                |
@@ -148,9 +149,9 @@ A Trust Record normally describes an execution and is produced by the runtime th
 
 `kind` is a closed set, because the value of the field is that a verifier can key on it.
 
-- **`self`** — the runtime produced its own record. Equivalent to omitting the block; stating it is allowed so a producer can be explicit rather than leave it inferred.
-- **`third-party-control-plane`** — assembled from another vendor's runtime governance output. The evidence is asserted by the system that produced it, with no root outside that system.
-- **`log-import`** — assembled from a log or export whose producer is not a control plane: a SIEM export, an audit trail, a batch job.
+- **`self`**: the runtime produced its own record. Equivalent to omitting the block; stating it is allowed so a producer can be explicit rather than leave it inferred.
+- **`third-party-control-plane`**: assembled from another vendor's runtime governance output. The evidence is asserted by the system that produced it, with no root outside that system.
+- **`log-import`**: assembled from a log or export whose producer is not a control plane: a SIEM export, an audit trail, a batch job.
 
 **A record whose `origin.kind` is not `self` MUST carry `runtime.platform: "software-only"`, and a verifier MUST reject it otherwise.** An importer holding someone else's log has no quote to present, so a hardware platform value on such a record is not a stronger claim but an untrue one. It is also the exact shape an adapter produces by starting from a hardware example and editing the fields it understood, which is why this is a MUST rather than a recommendation.
 
@@ -184,11 +185,133 @@ Registered `rel` values:
 
 Rule 3 is what makes the block safe to add. A reference that could invalidate a record would hand whoever controls the target a way to invalidate evidence they do not hold, and a reference that counted as evidence would be the assurance laundering §3.1.1 exists to prevent.
 
+**What the block cannot carry.** Two consequences follow from assurance-neutrality, and they are general to `references` rather than specific to any one relation. First, a reference cannot carry compliance evidence. The block commits to the pointer and not to the target, so no registered `rel` turns an entry into evidence that an obligation was met: a record pointing at a policy, a configuration, or an approval attests that it points there, and nothing about what the target says or whether it was in force. Second, a reference cannot carry a pre-execution commitment. A Trust Record is issued per execution, so a commitment a party needs to check before the workload runs has nothing to read; the evidence exists only after the thing it would have governed has already happened. Either reason alone settles the question, and registering a new `rel` does not touch either, because both are properties of the block rather than of its relation set.
+
+**`resolver` names who must retain, not who adjudicates.** The field is a retention undertaking: it identifies the party obliged to keep `id` resolvable, alongside `retention` as the period they undertake to keep it so. It is not a verification authority, and the two read as the same field until they are separated. The conformance suite refuses the opposite arrangement for a different field: TR-POL-003 takes its resolver from the caller and never derives it from the record, because a record that names its own checker can name one that agrees with it. Naming yourself as the party who must retain an artifact is ordinary and non-circular; naming yourself as the party who decides whether it is true is the circularity that rule refuses. An operator naming themselves as `resolver` for their own artifact is therefore within this section and would still be refused under TR-POL-003's rule, and both are correct. Rule 4 is aimed at a producer who can name no obliged party at all, not at one who is that party.
+
 **Unsettled, and deliberately named rather than hidden.** `retention` states an undertaking and nothing in this specification enforces it. A reference is worth only the ability to resolve it later, and transparency-log practice shows that gap is real rather than theoretical: a record can remain valid and become unreachable when the index that addressed it is removed. §7 open question 3 covers the same ground for `transparency` and the two should be resolved together.
+
+#### 3.1.3 `delegation.parent_record_hash`: what the digest covers
+
+`delegation.parent_record_hash` is the field a verifier walks to reconstruct a delegation chain. The schema gives it a pattern and calls it a "digest of the parent hop's Trust Record", which does not say which bytes are digested, and at least three readings of that phrase produce different digests.
+
+The preimage is the **complete parent record as published, with its `signature` member present**, canonicalised with RFC 8785 (JCS):
+
+```
+delegation.parent_record_hash = "sha256:" + hex(SHA-256(JCS(parent_record)))
+```
+
+with `sha384:` and SHA-384 as the permitted alternative, per the schema pattern.
+
+1. A producer MUST compute `parent_record_hash` over the complete parent record, including its `signature` member where the profile embeds one, canonicalised with RFC 8785. No member is removed, blanked or reordered before digesting.
+1. A verifier MUST recompute the digest the same way, over the parent record as it received it, and MUST NOT reconstruct or re-serialise the parent by any other route.
+1. The digest algorithm named in the prefix MUST match the algorithm used, and a verifier MUST reject a record whose prefix names an algorithm it does not support rather than fall back to another.
+
+**This is not the canonical form defined in §3.2.2, and the difference is deliberate.** §3.2.2 constructs the signature pre-image with the `signature` field *absent*, because a signature cannot cover itself. A chain digest has no such constraint and gains from not having one: digesting the record as published means a verifier digests exactly what it fetched, with no member-removal step to get wrong, and the parent's signature is then covered by the chain digest as well as checked on its own. For an enveloping-signature profile, where the record carries no `signature` member, the two pre-images coincide.
+
+The other two readings fail for concrete reasons. Digesting the file's raw bytes makes the value sensitive to whitespace and key order, so it breaks the first time a record passes through a system that re-serialises it. Digesting with `signature` removed adds a second canonicalisation rule for implementers to get wrong and buys nothing.
+
+**A near-miss here passes every vector but one.** The RFC 8785 key ordering that §3.2.2 describes, and the code-point ordering that `sort_keys=True` produces in several JSON libraries, agree across the Basic Multilingual Plane and diverge only once a key contains a supplementary-plane character. An implementation that takes the shortcut therefore computes correct chain digests for ASCII records indefinitely and produces an unverifiable chain the first time such a key appears. `examples/delegation-link/24-parent-key-supplementary-plane.json` is the vector that catches it: its parent record carries a key outside the Basic Multilingual Plane, where the two orderings disagree. Every other record's keys in that corpus are ASCII.
+
+#### 3.1.4 `reproducibility`: deterministic re-execution as evidence
+
+A `software-only` record (§3.1.1) is defined by what it lacks: nothing attested the execution. Some software-only producers can offer positive evidence of a different kind. Where the producer's coordination logic is a deterministic function, anyone holding its inputs can run it again and compare. This block is the claim that they can, stated precisely enough for a verifier to check it and precisely enough that a producer cannot make it loosely.
+
+**Definition.** A reproducibility claim states that re-executing a named deterministic function of the run, over a pinned input closure, yields a transcript whose RFC 8785 canonical digest equals the claimed value. The function is the producer's coordination logic: the code that decided what ran, in what order, on what inputs. It is not the workload's side effects, which are not re-executed, and it is not the model calls, which are not deterministic. The boundary of the function is drawn around every non-deterministic interaction: each one is recorded, content-addressed, and enters the closure as an input like any other. What re-executes is the decision logic over those recorded inputs.
+
+The claim has three parts, all explicit in the record: the code and the function it exposes, the input closure, and the transcript digest.
+
+| Field               | Required | Meaning                                                                                                                                                                                                                                                                                                                                                               |
+| ------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `function`          | yes      | Name under which the implementation at `code_identity` exposes the deterministic function re-executed. The convention for invoking it is part of the artifact at `code_identity`, and so content-addressed with it; a convention held anywhere else is something a verifier needs from the producer to begin, which the holdings rule below excludes.                 |
+| `code_identity`     | yes      | `sha256:` or `sha384:` digest of the implementation artifact that contains `function`. It MUST resolve to an artifact a verifier can obtain without the producer. For a producer whose coordination logic ships in the artifact `build_provenance` names, this is the same value as `build_provenance.digest`.                                                        |
+| `code_resolver`     | no       | Where the artifact at `code_identity` is obtained, in the sense §3.1.2 gives `resolver`: the party obliged to retain it. Omitted when the digest alone locates the artifact, as on a package index; present otherwise, since a verifier that cannot obtain the artifact reports `not-attempted`.                                                                      |
+| `input_closure`     | yes      | The complete content-addressed set of everything `function` reads: the initial configuration, and every recorded external interaction, model calls included. An array of `{id, digest, resolver}` entries, the shape §3.1.2 uses without `rel` or `retention`, since every entry stands in the same relation to the claim, and with `digest` required on every entry. |
+| `transcript_digest` | yes      | `sha256:` or `sha384:` digest, in the algorithm its prefix names, over the RFC 8785 canonical bytes of the transcript `function` produces when re-executed over `input_closure`.                                                                                                                                                                                      |
+
+The transcript is the function's complete output as a JSON value: every decision the coordination logic took, in order. Its shape belongs to the producer and is described by the profile or annex that describes the function. What this section fixes is that it is a JSON value canonicalised with RFC 8785, so that two verifiers digest the same bytes, and that the canonicalisation is the one §3.1.3 and §3.2.2 already require, so a verifier carries exactly one.
+
+1. A claim whose closure omits anything that can change the transcript is **malformed**. That is the definition of the claim, not a quality bar on it: a closure that does not pin what it claims to pin is not a weak claim, it is not a claim. A malformed claim is detected at re-execution, as a read beyond the closure, and has the outcome the holdings rule below gives that read. A closure entry the function does not read is surplus and has no effect on the outcome.
+1. A reproducibility claim MUST NOT affect `runtime.platform`. A record carrying the block and no `origin` block is `self` and carries whatever platform value it actually earned. Re-executability is not attestation and does not become it.
+1. The record signature MUST cover `reproducibility`, under the canonicalisation in §3.2.2.
+
+**Verifier holdings.** A verifier MUST hold three things before it reports any outcome other than `not-attempted`. Each carries its own bar, because each is a different kind of thing:
+
+- the implementation at `code_identity`, obtained as a public artifact and without the producer. The bar is availability: an implementation is shipped software and can be required to be obtainable by anyone;
+- every blob in `input_closure`, each resolved through its own `resolver` and each matching its own `digest`. The bar is integrity, not provenance: a run's closure is run-private by construction, a producer that is the only party retaining it is within §3.1.2, and what the verifier requires is that what it obtained matches the digest the producer signed;
+- the claim itself, from the signed record. No bar: it is covered by the signature, and coming from the producer is the point of it.
+
+If re-execution requires state that only the producer's environment can supply, it is not reproduction. The claim is then an assertion about that environment, and belongs elsewhere in the record or nowhere. The operational form of the same rule: a verifier MUST supply the function nothing but the closure, and a read beyond the closure, whether the verifier's environment refused it or let it through, is an observation that fixes the outcome by itself. The outcome is `not-attempted`, with the read named as the reason, whatever the re-run would otherwise have produced: a re-run that completed on something the claim did not pin is not the re-run the claim describes, and a digest it matched or missed says nothing about the claim. This is the rule a reader will be tempted to relax, and it is the one that makes the claim decidable rather than aspirational. It is also why model interactions are inputs in the closure rather than something a verifier re-invokes: a model call cannot be re-run to the same answer, so the function's boundary is drawn around it and the recorded interaction is pinned by digest.
+
+**Outcome.** The re-execution result is one of three values, and a verifier MUST report the one that occurred:
+
+| Outcome         | Meaning                                                                                                                                                                                                                                                                                                                                         |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `reproduced`    | The re-run completed on the closure alone and the digest of its transcript equals `transcript_digest`.                                                                                                                                                                                                                                          |
+| `diverged`      | The re-run completed on the closure alone and the digests differ. The result MUST record the verifier's observed digest, because divergence localises nothing by itself: producer tampering, a function that is not the deterministic one it is named as, and verifier drift are indistinguishable until a third party can compare transcripts. |
+| `not-attempted` | A closure blob could not be resolved, `code_identity` could not be obtained, the function read beyond the closure, the re-run did not run to completion, or the verifier could not establish that the re-run used the closure alone. The result MUST carry the reason.                                                                          |
+
+`not-attempted` MUST NOT be reported as `reproduced`, and MUST NOT be reported as `diverged`. Absent is not pass, and absent is not failure. This is the discipline §3.2.3 applies to a missing revocation bundle and §3.3.4 applies to a disclosure at the live tail of a chain: an inability to check is reported as that, with its cause, and is never rounded to either outcome a completed check would have produced.
+
+A `reproduced` outcome establishes what the definition says and nothing more: the named function over the pinned closure yields the claimed transcript. It establishes nothing about the workload's side effects or about the model calls, which are inputs. A `diverged` outcome is evidence that resolves and contradicts the record, and §3.3.1's rule for that case applies: the verifier fails the appraisal and does not downgrade to escape the contradiction.
+
+One optional member of the result, carried on any outcome, lets results that disagree be read together. `verifier_code_identity` is the digest of the verifier's own implementation. It discriminates nothing on its own: it is the verifier naming its own build, self-asserted, and it carries no weight singly. It earns its place as a correlation key across results, since two verifiers at different implementations disagreeing over the same closure is verifier drift, and that reading is unavailable without it.
+
+| `verifier_code_identity` across the disagreeing results | Reading                                            |
+| ------------------------------------------------------- | -------------------------------------------------- |
+| differs                                                 | verifier drift                                     |
+| same                                                    | no reproducing verifier found a benign explanation |
+
+The second row is the only one that accuses, and it accuses on absence. The record cannot distinguish a tampering producer from a cause nobody has thought of yet, so the row states what was not found rather than what was done.
+
+**Placement: the claim is producer-side, the result is an appraisal.** The claim sits in the record. The re-execution result is an appraisal made by the party that re-ran the function, with that party as `appraisal.verifier`. It is carried under an appraisal method discriminator, with the outcome scoped under the method:
+
+| Field                    | Required                        | Meaning                                                                                                                                                                                                                                                   |
+| ------------------------ | ------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `appraisal.method`       | no                              | The method this appraisal used. A closed set, for the reason §3.1.1 gives for `origin.kind`: a verifier keys on it. This version defines one value, `re-execution`.                                                                                       |
+| `appraisal.re_execution` | when `method` is `re-execution` | The result block: `outcome`, one of `reproduced`, `diverged`, `not-attempted`; `observed_digest`, required when `outcome` is `diverged`; `reason`, required when `outcome` is `not-attempted`; and the optional `verifier_code_identity` described above. |
+
+`appraisal.re_execution` MUST be present when `method` is `re-execution` and MUST be absent otherwise. `appraisal.status` is untouched: it remains the closed EAR set of `affirming`, `warning`, `contraindicated` and `none`, and the outcome above is not folded into it.
+
+**Why `not-attempted` is not `appraisal.status: none`.** EAR's `none` says that no appraisal was performed on the record. Under re-execution an appraisal was performed: the verifier held a claim, tried to re-run it, and either succeeded, diverged, or could not proceed for a reason it can name. `none` is the wrong value on all three counts, and on the third it is the most misleading, because a generic no-claim value is read as "fine" by the next reader and the reason for the absence is lost. `not-attempted` with a `reason` is the distinction §3.3.4 draws between `receipt_gap_disclosed` and `receipt_missing_required`: a named absence and a generic one are different findings, and collapsing them discards the finding. Keeping the outcome scoped under `method` also keeps `status` closed, which is where #190 left it. A future edit that folds `not-attempted` into `none` on the grounds that they look alike is not a tidy-up; it removes the reason from the record.
+
+Example claim, on the record:
+
+```
+"reproducibility": {
+  "function": "coordination/v1",
+  "code_identity": "sha256:e5f6a7b8c9d0e1f2...",
+  "code_resolver": "https://artifacts.example.org",
+  "input_closure": [
+    {"id": "config/initial", "digest": "sha256:1a2b3c4d...", "resolver": "https://artifacts.example.org"},
+    {"id": "model-call/0007", "digest": "sha256:9c8d7e6f...", "resolver": "https://artifacts.example.org"}
+  ],
+  "transcript_digest": "sha256:4f5e6d7c..."
+}
+```
+
+Example result, in the appraisal of a verifier that re-ran the function and obtained a different transcript:
+
+```
+"appraisal": {
+  "status": "contraindicated",
+  "verifier": "https://verifier.example.org",
+  "method": "re-execution",
+  "re_execution": {
+    "outcome": "diverged",
+    "observed_digest": "sha256:7d3c2b1a...",
+    "verifier_code_identity": "sha256:c4d5e6f7..."
+  }
+}
+```
+
+**Two commitments on one record.** A `software-only` record can now carry two recomputable commitments: `runtime.measurement`, over the preimage its producing profile documents, and `transcript_digest`, over the preimage this section fixes. They commit to different objects, the producer's inputs and state against the coordination function's output, and neither outcome implies the other: a `reproduced` result says nothing about `runtime.measurement`, and a `runtime.measurement` that recomputes says nothing about the transcript. A profile whose `runtime.measurement` preimage is itself a function of the closure may say so, and then one closure pins both; absent that statement the two are checked separately.
+
+**Out of scope.** This section names no journal format, no transcript shape, and no way of storing or resolving a closure; those belong to the profile or annex that describes the function.
 
 ### 3.2 Wire format
 
-**Envelope:** EAT (RFC 9711) — JWT (JSON, human-readable contexts) or CWT/CBOR-COSE (constrained and high-throughput contexts).
+\*\*Envelope: \*\* EAT (RFC 9711): JWT (JSON, human-readable contexts) or CWT/CBOR-COSE (constrained and high-throughput contexts).
 
 **Profile URI:** `tag:agentrust-io.com,2026:trace-v0.2`
 
@@ -265,7 +388,7 @@ Rule 3 is what makes the block safe to add. A reference that could invalidate a 
 1. Object keys are sorted by UTF-16 code unit (ascending), per RFC 8785 §3.2.3. This is not the same as Unicode code-point order: the two agree across the Basic Multilingual Plane and diverge once a key contains a supplementary-plane character, because surrogates occupy U+D800 to U+DFFF and therefore sort below high BMP characters. Sorting Python `str` values with `sorted()` gives code-point order and is wrong here; an RFC 8785 library gets this right.
 1. No whitespace between tokens.
 1. Numbers are serialized in IEEE 754 double-precision format using the shortest decimal representation that round-trips. RFC 8785 §3.2.2.3 defers this to ECMA-262 §7.1.12.1, which converts through a double, so `9007199254740992` and `9007199254740993` become the same bytes and one signature would stand for two different objects. RFC 8785 Appendix B note 1 makes the range -9007199254740991 to 9007199254740991 a SHOULD on values interpreted as true integers; TRACE raises it to a MUST. No object canonicalized under this section may carry an integer outside that range, and one that does MUST be rejected. A value that needs to be larger is carried as a JSON string, which RFC 8785 Appendix D requires of any number without a natural place in JSON. No field is typed `number`, and none should be: floating-point values raise a second question, the shortest decimal form that round-trips, which a range does not settle.
-1. Strings are serialized as UTF-8; only the characters mandated by RFC 8259 §7 are escaped (U+0022, U+005C, and U+0000–U+001F).
+1. Strings are serialized as UTF-8; only the characters mandated by RFC 8259 §7 are escaped (U+0022, U+005C, and U+0000 to U+001F).
 1. Encode the result as UTF-8 bytes. This byte sequence is the pre-image for the signature.
 
 Implementations MUST use an RFC 8785-conformant library. Using `json.dumps(sort_keys=True)` (Python) or equivalent ad-hoc sorting is insufficient: it diverges from RFC 8785 for non-ASCII strings and for IEEE 754 number serialization. Libraries that do pass every other part of this section still disagree on integers outside the safe-integer domain, and the disagreement is not between a right answer and a wrong one. `canonicalize` 4.0.0 (npm) applies the algorithm as written and emits the same bytes for `9007199254740992` and `9007199254740993`. `rfc8785` 0.1.4 (PyPI) refuses both rather than emit bytes that stand for more than one value, which is not what §3.2.2.3 says to do and is the safer way to be wrong. A record carrying such a value gets whichever behaviour the verifier happens to have. The schema bound removes the case instead of choosing between them. **The range, and why a profile MUST NOT widen it.** One place in particular looks safe and is not. 2^53 is exactly representable, and no two integers in -2^53 to 2^53 share a double, so a range ending there appears sound. It is not, because a validator whose only number type is the double never sees the instance value; it sees what the value parsed to. It reads `9007199254740993` as `9007199254740992`, finds it inside a maximum of 2^53, and admits the one value the range exists to exclude. At 2^53 - 1 every out-of-range integer parses to something still outside the range, so the bound holds in a language that cannot represent what it is rejecting. It is the widest bound that is enforceable at all, which is a stronger reason to use it than convention.
@@ -313,7 +436,7 @@ An expired bundle is not a pass. A verifier whose newest bundle is older than th
 
 ### 3.3 Verification
 
-Any party — browser, CLI, in-cluster verifier, third-party auditor — verifies:
+Any party, browser, CLI, in-cluster verifier, third-party auditor, verifies:
 
 1. The record's signature binding (section 3.2.2) verifies against the key in `cnf`, BEFORE any other field is trusted. A record with no verifiable binding MUST be rejected.
 1. The record is fresh: `iat` is neither older than the maximum age (default 24 hours) nor later than the current time plus the allowed clock skew (default 5 minutes), unless the deployment profile specifies different bounds. If the verifier issued a challenge nonce, `runtime.nonce` echoes it.
@@ -342,7 +465,7 @@ Until dependency discovery and evidence resolution are standardized, `transitive
 
 #### 3.3.2 External execution evidence (optional)
 
-Some deployments attach independent, out-of-band receipts to individual audit-chain entries — for example, a signed assertion from a safety controller confirming or rejecting an actuation request. The TRACE Trust Record commits the audit chain by hash; the receipts live inside that chain, not inside the Trust Record itself. This section defines how a verifier treats them.
+Some deployments attach independent, out-of-band receipts to individual audit-chain entries: for example, a signed assertion from a safety controller confirming or rejecting an actuation request. The TRACE Trust Record commits the audit chain by hash; the receipts live inside that chain, not inside the Trust Record itself. This section defines how a verifier treats them.
 
 A receipt within an audit-chain entry is characterized by: an issuer identity (`issuer`), a key reference (`issuer_key_id`), a signature over the canonical receipt fields (`signature`), a content digest (`evidence_hash`), a type tag (`evidence_type`), and a binding to the corresponding tool call (`linked_call_id`).
 
@@ -356,7 +479,7 @@ A verifier configured with the issuer key that fails any of these three checks M
 
 **When the issuer key is not configured.** A receipt whose issuer key is unknown to the verifier is unverified, not invalid. The Trust Record's gateway-produced evidence (signature, audit-chain hash, policy hash, TEE measurement) is unaffected. Verifiers SHOULD surface an advisory status (e.g., `external_evidence_unverified`) rather than silently ignoring the receipt.
 
-**Trust boundary.** External execution evidence is only as trustworthy as the issuer key and the PKI behind it. TRACE binds the receipt into the audit chain — it does not certify that a physical action occurred, that it was executed safely, or that any functional-safety standard was met. Those claims belong to the issuer and its certification body, not to TRACE.
+**Trust boundary.** External execution evidence is only as trustworthy as the issuer key and the PKI behind it. TRACE binds the receipt into the audit chain: it does not certify that a physical action occurred, that it was executed safely, or that any functional-safety standard was met. Those claims belong to the issuer and its certification body, not to TRACE.
 
 #### 3.3.3 Action receipts for embodied workflows (informative)
 
@@ -370,7 +493,7 @@ Embodied-agent profiles need to keep three evidence layers separate:
 
 This split is intentionally independent of build-provenance depth. A verifier can have a fully verified dependency chain with no action receipts, or a complete action-receipt chain for a workload whose builder is only surface checked. Future profiles may express this as a separate action-receipt requirement, such as `required`, `optional`, or `none`, without folding action evidence into the supply-chain provenance axis.
 
-An action receipt profile can build on the external execution evidence rules in section 3.3.1 by requiring the verifier to:
+An action receipt profile can build on the external execution evidence rules in section 3.3.2 by requiring the verifier to:
 
 1. recompute the receipt's action or evidence digest from the canonical action preimage;
 1. verify the receipt signature against a pinned, manifest-bound, or otherwise trusted issuer key, not only against a key embedded in the receipt;
@@ -380,9 +503,54 @@ An action receipt profile can build on the external execution evidence rules in 
 
 A signed controller rejection is valid negative evidence: it can prove that the controller rejected the action request under a trusted key and session binding. It is not a TRACE verification failure unless the receipt itself is malformed, untrusted, stale, out of order, or not bound to the expected call. Conversely, a signed acceptance receipt is not proof of physical completion or functional-safety certification unless the external issuer and profile explicitly make, and the verifier is configured to trust, that stronger claim.
 
+#### 3.3.4 Disclosed gaps in a receipt chain
+
+Under a profile requiring action receipts, completeness of the receipt chain is the load-bearing property. No emitter can be made gap-proof: any writer operating asynchronously has a window in which a crash loses a tail of receipts. A specification that offers only "complete" and "broken" therefore rewards concealment, because an operator who backfills a lost receipt scores better than one who reports the loss.
+
+A `GapDisclosure` is a signed statement, occupying a position in the receipt chain, that receipts which would have occupied that position were never emitted. It is negative evidence contributed by the emitter about itself. It does not establish that the missing receipts ever existed, how many were lost, or that the emitter did not omit them selectively; what the splice proves is where the gap sits in the chain, and nothing else.
+
+**Structure.** A `GapDisclosure` is a chain element. It MUST carry:
+
+- `type`, the value `GapDisclosure/1.0`;
+- `previous_receipt_hash`, the digest of the chain element immediately preceding the gap, in the same form and computed the same way as on a receipt;
+- `session_id`, naming the receipt stream the disclosure belongs to;
+- `issuer_key_id`, identifying the key that signed it;
+- `signature`, over the canonical form of the disclosure with the signature field removed.
+
+It MAY carry `cause` and `receipts_lost_estimate`. Both are descriptive self-reports and nothing more: the receipts an estimate counts are absent by definition, so nothing in the chain corroborates either field. A verifier MUST NOT treat them as established, MUST NOT condition any outcome on their values, and MUST NOT reject a disclosure because either disagrees with other evidence. They exist to be reported, not relied on.
+
+**Stream binding.** The `session_id` is covered by the signature, and a verifier MUST reject a disclosure whose `session_id` does not match the receipt stream under verification. Without that comparison, a disclosure honestly signed for one stream is a transplantable excuse for a gap in any other: replay, in the position where replay is hardest to distinguish from recovery.
+
+**Chain binding.** A `GapDisclosure` MUST be spliced into the receipt chain at the point of resumption. Concretely, its `previous_receipt_hash` MUST name a chain element that is present, and the next chain element emitted after resumption MUST carry a `previous_receipt_hash` naming the disclosure. A disclosure that is not linked from both directions has not been sealed into the chain and MUST NOT be treated as covering anything.
+
+That requirement has a window in which it cannot be met honestly: at the live tail of the chain, after the failure and before resumption, the sealing successor does not exist yet. A verifier meeting a tail disclosure whose other checks pass MUST NOT report `receipt_gap_disclosed`, and MUST NOT report `receipt_invalid` either: the absence of a successor is an inability to check, not evidence of a defect, the same principle as section 3.3.2's treatment of unknown issuer keys. It MUST surface the disclosure as unverified with a distinct advisory, and re-verification after the chain resumes upgrades or impeaches it on the seal that then exists. This matters adversarially: a chain truncated immediately after a disclosure is indistinguishable from an honest tail, so whatever a verifier grants the honest tail, it grants the truncation.
+
+Gap boundaries MUST NOT be expressed as timestamps or as emitter-assigned sequence numbers. Both are signed by the same key that signs the receipts, so neither constrains an emitter that is misrepresenting the gap. The chain links are the boundaries.
+
+**Issuer.** A `GapDisclosure` MUST be signed by the key that signed the chain element its `previous_receipt_hash` names, or by an ancestor of that key in the hierarchy of section 3.2.1. A disclosure signed by any other key MUST be treated as invalid, whether or not that key is otherwise trusted. A gap is the moment at which introducing an unrelated key is most useful to an adversary and least distinguishable from recovery.
+
+**Consecutive disclosures.** A `GapDisclosure` MAY name another `GapDisclosure` as its predecessor, which represents an emitter that failed again before emitting a receipt. A verifier MUST report the number of consecutive disclosures. It MUST NOT reject solely on that basis: an emitter failing repeatedly and disclosing each time is behaving better than one that is silent.
+
+**Verifier outcomes.** The action-receipt outcome `receipt_missing_required` is narrowed, and the outcome `receipt_gap_disclosed` is added beside it:
+
+| Outcome                    | Meaning                                                                                                                             |
+| -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `receipt_gap_disclosed`    | Required receipts are absent, and a valid `GapDisclosure` occupies their position in the chain. Emitter-attested negative evidence. |
+| `receipt_missing_required` | Required receipts are absent and no valid disclosure occupies their position. Silent, and treated as presumptively adversarial.     |
+
+A verifier MUST report `receipt_gap_disclosed` distinctly from `receipt_missing_required`. Collapsing them discards the distinction the disclosure was issued to make.
+
+Whether `receipt_gap_disclosed` is accepted or rejected MUST be a verifier policy input, not implementation-defined behaviour. A relying party evaluating a payment authorisation and one evaluating a telemetry batch will reasonably differ, and neither should have to change verifier to express that. One bound on that policy is not negotiable: a profile that requires independently proven completeness of the receipt chain MUST NOT accept `receipt_gap_disclosed` as satisfying it. A disclosed gap is an attested absence, not a proof of completeness, and no policy setting may promote the former into the latter.
+
+A `GapDisclosure` that fails signature verification, is not bound into the chain from both directions, names a session other than the stream under verification, is signed by a key outside the permitted set, or whose claimed gap is contradicted by chain elements that are in fact present, MUST yield `receipt_invalid` rather than falling back to `receipt_missing_required`. A forged, transplanted or self-contradictory disclosure is worse evidence than no disclosure: it is an attempt to convert silence into attestation, and the attempt itself is a finding.
+
+**Reporting.** A verification result MUST report each disclosed gap individually, carrying at minimum the linked predecessor, the number of consecutive disclosures, and the `cause` when one was supplied. Reducing disclosed gaps to a count or a boolean discards exactly the detail a relying party's policy needs.
+
+The conformance vectors for this section are `examples/action-receipts/gap-disclosure/`: twenty fixtures, two independent vectors per rule, with a generator that reproduces them byte for byte, and the live-tail contrast pinned by a dedicated test.
+
 ### 3.4 Scope
 
-TRACE governs any confidential workload — AI agent execution, regulated data processing, sovereign compute, secure multi-party computation. AI agents are the forcing function and the first reference profile, not the limit of the standard.
+TRACE governs any confidential workload: AI agent execution, regulated data processing, sovereign compute, secure multi-party computation. AI agents are the forcing function and the first reference profile, not the limit of the standard.
 
 ______________________________________________________________________
 
@@ -413,22 +581,22 @@ TRACE is a **profile**, not a parallel stack. It binds existing primitives into 
 
 ### 4.1 Primitives composed
 
-- **RATS / EAT (RFC 9711)** — wire envelope and claim model. NVIDIA NRAS, Intel Trust Authority, and Azure MAA produce attestation tokens that map into this envelope through vendor-co-authored annexes (see §4.4).
-- **SLSA Provenance v1.0** — build-time provenance. Build Level 2 minimum for TRACE-conformant records in v1.0; Build Level 3 is the target for production reference implementations.
-- **SPIFFE / SPIRE** — workload identity. The SVID is bound to the TEE measurement so identity is rooted in hardware.
-- **SCITT** — append-only transparency log. TRACE defines a SCITT profile for Trust Record inclusion (Signed Statement registration, Receipt format, key rotation semantics).
-- **EAR (draft-ietf-rats-ar4si)** — verifier output format. Separates *what was claimed* from *what was accepted*.
-- **MCP** — Model Context Protocol tool surface. TRACE adds (a) cryptographic binding of the transcript hash into the EAT envelope and (b) a per-call `data_class` classification. The normative MCP profile is not in this version; it is targeted for v0.3.
-- **A2A** — Agent-to-Agent communication. TRACE adds transcript binding and cross-protocol identity threading via SPIFFE SVID. The `delegation` link block (§3.1) landed in v0.2 as the foundation; the normative A2A binding rules are targeted for v0.3.
-- **AIBOM (SPDX 3.0 AI Profile, CycloneDX 1.7 ML-BOM)** — component inventory for models, datasets, dependencies. Referenced by digest from `model`.
-- **C2PA** — adjacent, not absorbed. Where a TRACE'd execution produces media, the output may carry a C2PA manifest that references the Trust Record.
+- **RATS / EAT (RFC 9711)**: wire envelope and claim model. NVIDIA NRAS, Intel Trust Authority, and Azure MAA produce attestation tokens that map into this envelope through vendor-co-authored annexes (see §4.4).
+- **SLSA Provenance v1.0**: build-time provenance. Build Level 2 minimum for TRACE-conformant records in v1.0; Build Level 3 is the target for production reference implementations.
+- **SPIFFE / SPIRE**: workload identity. The SVID is bound to the TEE measurement so identity is rooted in hardware.
+- **SCITT**: append-only transparency log. TRACE defines a SCITT profile for Trust Record inclusion (Signed Statement registration, Receipt format, key rotation semantics).
+- **EAR (draft-ietf-rats-ar4si)**: verifier output format. Separates *what was claimed* from *what was accepted*.
+- **MCP**: Model Context Protocol tool surface. TRACE adds (a) cryptographic binding of the transcript hash into the EAT envelope and (b) a per-call `data_class` classification. The normative MCP profile is not in this version; it is targeted for v0.3.
+- **A2A**: Agent-to-Agent communication. TRACE adds transcript binding and cross-protocol identity threading via SPIFFE SVID. The `delegation` link block (§3.1) landed in v0.2 as the foundation; the normative A2A binding rules are targeted for v0.3.
+- **AIBOM (SPDX 3.0 AI Profile, CycloneDX 1.7 ML-BOM)**: component inventory for models, datasets, dependencies. Referenced by digest from `model`.
+- **C2PA**: adjacent, not absorbed. Where a TRACE'd execution produces media, the output may carry a C2PA manifest that references the Trust Record.
 
 ### 4.2 Hardware roots
 
-- **NVIDIA** — H100, H200, Blackwell with confidential computing mode. NRAS EAT.
-- **Intel** — TDX with Trust Authority. TDX Quote (DCAP) + MRTD + RTMRs.
-- **AMD** — SEV-SNP with VCEK/VLEK chain to AMD Root Key. CoRIM CBOR mapping.
-- **Cloud platform attestation** — Azure MAA, GCP Confidential Space, AWS Nitro Enclaves all expressible as RATS Evidence and composable into a TRACE envelope.
+- **NVIDIA**: H100, H200, Blackwell with confidential computing mode. NRAS EAT.
+- **Intel**: TDX with Trust Authority. TDX Quote (DCAP) + MRTD + RTMRs.
+- **AMD**: SEV-SNP with VCEK/VLEK chain to AMD Root Key. CoRIM CBOR mapping.
+- **Cloud platform attestation**: Azure MAA, GCP Confidential Space, AWS Nitro Enclaves all expressible as RATS Evidence and composable into a TRACE envelope.
 
 ### 4.3 Bindings TRACE adds
 
@@ -436,7 +604,7 @@ These components exist in their respective ecosystems. TRACE adds the binding ru
 
 - **`policy` claim.** Policy artifacts (OPA bundles, Cedar policies, custom DSLs) and policy hashing are established. TRACE adds the binding: the policy bundle hash is sealed to the TEE measurement, the enforcement mode is recorded, and substituting the policy invalidates the runtime claim. Gateways MUST default `enforcement_mode` to `enforce`. A deployment MUST explicitly configure `silent` mode; `silent` MUST NOT be the default. In `silent` mode, the audit chain still records every would-have-denied decision; only operational log lines are suppressed.
 
-**`enforcement_mode: "declared"`.** The three modes above all assert that *something evaluated the policy*. `declared` asserts less: the policy is named and bound into the signed record, and nothing evaluated it. That is not a corner case, it is the common one for a producer with no policy engine — an agent framework observed by an adapter has a policy the operator declares and no evaluation of it anywhere, and with only three values such a record had to claim an evaluation that never happened.
+**`enforcement_mode: "declared"`.** The three modes above all assert that *something evaluated the policy*. `declared` asserts less: the policy is named and bound into the signed record, and nothing evaluated it. That is not a corner case, it is the common one for a producer with no policy engine: an agent framework observed by an adapter has a policy the operator declares and no evaluation of it anywhere, and with only three values such a record had to claim an evaluation that never happened.
 
 `declared` is the weakest value and MUST NOT be a default. A producer that evaluates policy MUST NOT use it. A consumer MUST NOT read it as evidence that any rule was checked; it says only that this is the policy the deployment states it was operating under. A verifier appraising for enforcement SHOULD treat `declared` as it treats an absent enforcement claim.
 
@@ -446,7 +614,7 @@ These components exist in their respective ecosystems. TRACE adds the binding ru
 
 ### 4.4 Vendor profile annexes
 
-TRACE will publish vendor-co-authored claim-mapping annexes — one per silicon-root and cloud-attestation surface — as informative companions to v1.0. Co-editor slots open for:
+TRACE will publish vendor-co-authored claim-mapping annexes, one per silicon-root and cloud-attestation surface, as informative companions to v1.0. Co-editor slots open for:
 
 | Surface                                       | Co-editor slot |
 | --------------------------------------------- | -------------- |
@@ -462,15 +630,15 @@ ______________________________________________________________________
 
 the reference implementation at the MCP tool-call boundary.
 
-| Phase                             | What ships                                                                                           | TRACE fields                                                    | Timeline |
-| --------------------------------- | ---------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- | -------- |
-| **Phase 1 — Runtime Trust**       | MCP server runs in TEE; SPIFFE identity bound to TEE measurement; signed Trust Record per invocation | `subject`, `runtime`, `build_provenance`, `cnf`, `transparency` | Q2 2026  |
-| **Phase 2 — Policy Enforcement**  | Transparent JSON-RPC proxy inside TEE; per-tool policy + parameter classification                    | + `policy`, `data_class`, `tool_transcript`                     | Q3 2026  |
-| **Phase 3 — Workflow Provenance** | Native SDK; cross-MCP lineage; provenance DAG                                                        | Full Trust Record                                               | Q4 2026+ |
+| Phase                            | What ships                                                                                           | TRACE fields                                                    | Timeline |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- | -------- |
+| **Phase 1: Runtime Trust**       | MCP server runs in TEE; SPIFFE identity bound to TEE measurement; signed Trust Record per invocation | `subject`, `runtime`, `build_provenance`, `cnf`, `transparency` | Q2 2026  |
+| **Phase 2: Policy Enforcement**  | Transparent JSON-RPC proxy inside TEE; per-tool policy + parameter classification                    | + `policy`, `data_class`, `tool_transcript`                     | Q3 2026  |
+| **Phase 3: Workflow Provenance** | Native SDK; cross-MCP lineage; provenance DAG                                                        | Full Trust Record                                               | Q4 2026+ |
 
 **Hardware:** Intel TDX, AMD SEV-SNP, NVIDIA H100/Blackwell CC.
 
-**Deployment:** Confidential VMs and Confidential Containers (Kata-CC) on AKS, GCP Confidential Space, AWS Nitro Enclaves, and on-prem. BYOW — existing MCP servers run unchanged.
+\*\*Deployment: \*\* Confidential VMs and Confidential Containers (Kata-CC) on AKS, GCP Confidential Space, AWS Nitro Enclaves, and on-prem. BYOW: existing MCP servers run unchanged.
 
 ______________________________________________________________________
 
@@ -478,11 +646,9 @@ ______________________________________________________________________
 
 ### 6.1 Host
 
-**The Linux Foundation**, as its own series: "TRACE Specification, a Series of LF Projects, LLC". Formation is in progress; on completion, governance transitions to a Technical Steering Committee as defined in `CHARTER.md`, and spec, IP, trademark, and conformance mark sit with the series.
+**The Linux Foundation**, as its own series: "TRACE Specification, a Series of LF Projects, LLC". The Project Contribution Agreement and the Technical Charter have been executed; when the Technical Charter takes effect, governance transitions to a Technical Steering Committee as defined in `CHARTER.md`, and spec, IP, trademark, and conformance mark sit with the series.
 
-This supersedes the earlier proposal to split the technical workstream to CoSAI and the spec, IP and trademark to the Linux Foundation entity hosting the Model Context Protocol. That arrangement made TRACE a guest of two hosts, neither of which owned the conformance mark outright.
-
-Other standards bodies participate as technical-liaison partners: OpenSSF (SLSA stewardship), CNCF (SPIFFE/SPIRE stewardship), IETF (RATS, EAT, SCITT, EAR working groups), CoSAI (WS4 interoperability).
+Other standards bodies participate as technical-liaison partners: OpenSSF (SLSA stewardship), CNCF (SPIFFE/SPIRE stewardship), IETF (RATS, EAT, SCITT, EAR working groups).
 
 ### 6.2 Target contributing organizations
 
@@ -503,7 +669,7 @@ ______________________________________________________________________
 
 These need input before v1.0. Two are now resolved and are kept here, marked, so a reader tracking them can see how they landed.
 
-1. ~~**Host organization.** CoSAI, Linux Foundation, or a federated arrangement?~~ **Resolved:** the Linux Foundation, as TRACE's own series. See §6.1.
+1. ~~**Host organization.** Which organization hosts the specification?~~ **Resolved:** the Linux Foundation, as TRACE's own series. See §6.1.
 1. **AI-agent profile vs general profile.** One inclusive profile or split agent execution and generic confidential workload from day one?
 1. **Transparency log operator(s).** One canonical SCITT log, federated logs, or BYO with conformance criteria?
 1. **Policy language.** TRACE binds a policy *hash*. Does v1.0 also specify a policy *language* (Cedar, Rego, custom DSL), or stay language-agnostic?
@@ -513,15 +679,15 @@ These need input before v1.0. Two are now resolved and are kept here, marked, so
 
 ______________________________________________________________________
 
-## Appendix A — Glossary
+## Appendix A: Glossary
 
 | Term         | Definition                                                                                 |
 | ------------ | ------------------------------------------------------------------------------------------ |
 | TCB          | Trusted Computing Base. Components whose correctness a TRACE Record's validity depends on  |
-| TEE          | Trusted Execution Environment — Intel TDX, AMD SEV-SNP, NVIDIA H100/Blackwell CC           |
+| TEE          | Trusted Execution Environment: Intel TDX, AMD SEV-SNP, NVIDIA H100/Blackwell CC            |
 | EAT          | Entity Attestation Token (RFC 9711). RATS wire envelope. JWT or CBOR-COSE                  |
 | RATS         | Remote Attestation Procedures (IETF). The attestation architecture                         |
-| EAR          | EAT Attestation Results — verifier appraisal output format                                 |
+| EAR          | EAT Attestation Results: verifier appraisal output format                                  |
 | SLSA         | Supply-chain Levels for Software Artifacts (OpenSSF). Build-time provenance                |
 | SCITT        | Supply Chain Integrity, Transparency, Trust (IETF). Append-only transparency log primitive |
 | SPIFFE       | Secure Production Identity Framework For Everyone (CNCF). Workload identity                |
@@ -530,51 +696,51 @@ ______________________________________________________________________
 | A2A          | Agent-to-Agent (Google). Inter-agent communication protocol                                |
 | C2PA         | Coalition for Content Provenance and Authenticity. Content origin manifests                |
 | RIM          | Reference Integrity Manifest. Vendor-published reference measurements                      |
-| Trust Record | TRACE's portable signed artifact — see §3                                                  |
-| cMCP         | Confidential MCP — TRACE reference implementation at the MCP boundary                      |
+| Trust Record | TRACE's portable signed artifact: see §3                                                   |
+| cMCP         | Confidential MCP: TRACE reference implementation at the MCP boundary                       |
 
 ______________________________________________________________________
 
-## Appendix B — References
+## Appendix B: References
 
 ### IETF
 
-- RATS Architecture (RFC 9334) — https://www.rfc-editor.org/rfc/rfc9334
-- EAT — Entity Attestation Token (RFC 9711) — https://www.rfc-editor.org/rfc/rfc9711
-- SCITT Architecture (draft-ietf-scitt-architecture) — https://datatracker.ietf.org/doc/draft-ietf-scitt-architecture/
-- SCITT Reference APIs (draft-ietf-scitt-scrapi) — https://datatracker.ietf.org/doc/draft-ietf-scitt-scrapi/
-- EAR / AR4SI (draft-ietf-rats-ar4si) — https://datatracker.ietf.org/doc/draft-ietf-rats-ar4si/
-- JWS (RFC 7515) — https://www.rfc-editor.org/rfc/rfc7515
-- JWE (RFC 7516) — https://www.rfc-editor.org/rfc/rfc7516
-- COSE (RFC 9052/9053) — https://www.rfc-editor.org/rfc/rfc9052
-- JWK / cnf claim (RFC 7517 / RFC 7800) — https://www.rfc-editor.org/rfc/rfc7517
-- JWK Thumbprint (RFC 7638) — https://www.rfc-editor.org/rfc/rfc7638
-- JSON Canonicalization Scheme / JCS (RFC 8785) — https://www.rfc-editor.org/rfc/rfc8785
+- RATS Architecture (RFC 9334): https://www.rfc-editor.org/rfc/rfc9334
+- EAT, Entity Attestation Token (RFC 9711), https://www.rfc-editor.org/rfc/rfc9711
+- SCITT Architecture (draft-ietf-scitt-architecture): https://datatracker.ietf.org/doc/draft-ietf-scitt-architecture/
+- SCITT Reference APIs (draft-ietf-scitt-scrapi): https://datatracker.ietf.org/doc/draft-ietf-scitt-scrapi/
+- EAR / AR4SI (draft-ietf-rats-ar4si): https://datatracker.ietf.org/doc/draft-ietf-rats-ar4si/
+- JWS (RFC 7515): https://www.rfc-editor.org/rfc/rfc7515
+- JWE (RFC 7516): https://www.rfc-editor.org/rfc/rfc7516
+- COSE (RFC 9052/9053): https://www.rfc-editor.org/rfc/rfc9052
+- JWK / cnf claim (RFC 7517 / RFC 7800): https://www.rfc-editor.org/rfc/rfc7517
+- JWK Thumbprint (RFC 7638): https://www.rfc-editor.org/rfc/rfc7638
+- JSON Canonicalization Scheme / JCS (RFC 8785): https://www.rfc-editor.org/rfc/rfc8785
 
 ### Foundation Specifications
 
-- SLSA Specification v1.0 (OpenSSF) — https://slsa.dev/spec/v1.0/
-- SPIFFE / SPIRE Specifications (CNCF) — https://spiffe.io/docs/latest/spiffe-about/
-- SPDX 3.0 AI Profile — https://spdx.dev/use/specifications/
-- CycloneDX 1.7 ML-BOM — https://cyclonedx.org/specification/overview/
-- C2PA Technical Specification v2 — https://c2pa.org/specifications/specifications/2.0/
-- Sigstore / Rekor — https://docs.sigstore.dev/
+- SLSA Specification v1.0 (OpenSSF): https://slsa.dev/spec/v1.0/
+- SPIFFE / SPIRE Specifications (CNCF): https://spiffe.io/docs/latest/spiffe-about/
+- SPDX 3.0 AI Profile: https://spdx.dev/use/specifications/
+- CycloneDX 1.7 ML-BOM: https://cyclonedx.org/specification/overview/
+- C2PA Technical Specification v2: https://c2pa.org/specifications/specifications/2.0/
+- Sigstore / Rekor: https://docs.sigstore.dev/
 
 ### Vendor Hardware Attestation
 
-- NVIDIA Remote Attestation Service — https://docs.nvidia.com/attestation/api-docs-nras/
-- Intel Trust Authority — https://www.intel.com/content/www/us/en/security/trust-authority.html
-- Intel TDX — https://www.intel.com/content/www/us/en/developer/tools/trust-domain-extensions/overview.html
-- AMD SEV-SNP — https://www.amd.com/en/developer/sev.html
-- Microsoft Azure Attestation — https://learn.microsoft.com/en-us/azure/attestation/overview
-- Microsoft Azure Confidential Ledger — https://learn.microsoft.com/en-us/azure/confidential-ledger/
-- GCP Confidential Space — https://cloud.google.com/confidential-computing/confidential-space/docs
-- AWS Nitro Enclaves — https://aws.amazon.com/ec2/nitro/nitro-enclaves/
+- NVIDIA Remote Attestation Service: https://docs.nvidia.com/attestation/api-docs-nras/
+- Intel Trust Authority: https://www.intel.com/content/www/us/en/security/trust-authority.html
+- Intel TDX: https://www.intel.com/content/www/us/en/developer/tools/trust-domain-extensions/overview.html
+- AMD SEV-SNP: https://www.amd.com/en/developer/sev.html
+- Microsoft Azure Attestation: https://learn.microsoft.com/en-us/azure/attestation/overview
+- Microsoft Azure Confidential Ledger: https://learn.microsoft.com/en-us/azure/confidential-ledger/
+- GCP Confidential Space: https://cloud.google.com/confidential-computing/confidential-space/docs
+- AWS Nitro Enclaves: https://aws.amazon.com/ec2/nitro/nitro-enclaves/
 
 ### Adjacent Work
 
-- Project Oak (Google DeepMind) — https://github.com/project-oak/oak
-- Anthropic MCP Specification — https://modelcontextprotocol.io/specification/
-- Google A2A Specification — https://a2a-protocol.org/latest/specification/
-- MITRE ATLAS — https://atlas.mitre.org/
-- OWASP Top 10 for Agentic Applications — https://genai.owasp.org/
+- Project Oak (Google DeepMind): https://github.com/project-oak/oak
+- Anthropic MCP Specification: https://modelcontextprotocol.io/specification/
+- Google A2A Specification: https://a2a-protocol.org/latest/specification/
+- MITRE ATLAS: https://atlas.mitre.org/
+- OWASP Top 10 for Agentic Applications: https://genai.owasp.org/
