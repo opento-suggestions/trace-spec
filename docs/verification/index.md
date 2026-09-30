@@ -22,7 +22,11 @@ A signature proves a statement came from the trusted key. It does not establish 
 
 ### Step 4: Check the EAT profile
 
-The current SDK requires `tag:agentrust-io.com,2026:trace-v0.2`. The superseded v0.1 identifier is rejected. This check is already included in `verify_record`; a custom verifier must also enforce its supported profile.
+[Section 3.3](https://trace.agentrust-io.com/spec/trace-v0.2/#33-verification) requires a nonempty `accepted_profiles` set containing only profiles whose schemas and verification semantics the verifier implements. Reject an unsupported member anywhere in that declaration, even if the record names a supported profile. Also reject a record whose `eat_profile` is outside the declared set.
+
+A successful verification result records both the verified `profile` and the complete `accepted_profiles` set configured at verification time. Retaining only the record's profile loses which other profiles the verifier claimed to support. These fields belong to the verifier's result; they do not alter the signed record.
+
+The current SDK accepts only `tag:agentrust-io.com,2026:trace-v0.2` and rejects the superseded v0.1 identifier. `verify_record` enforces these checks and returns `result.profile` and `result.accepted_profiles`. Obligations 1 and 4 of [#116](https://github.com/agentrust-io/trace-spec/issues/116), emitter version declarations and downgrade disclosure, remain deferred.
 
 ### Step 5: Appraise the claims
 
@@ -36,6 +40,12 @@ Resolve and verify the evidence your policy requires: hardware reports, expected
 | `none`            | No appraisal is claimed                                                                      |
 
 The recipient decides whether the checks performed satisfy the operation's requirements. A non-software platform name or `affirming` string alone is insufficient.
+
+### Resolving cited objects
+
+A record cites objects it does not carry: `appraisal.policy_ref`, `runtime.rim_uri` and `model.aibom_uri` are URIs, and the schema checks only that each parses as one. Whether the object behind a URI can still be obtained is a fact about the world at verification time, so `verify_record` records it rather than assuming it. Pass `citation_resolver`, a function from URI to bytes that you supply, and the result's `citations` field reports one row per surface: `resolved`, with the SHA-256 over exactly the bytes the resolver returned and their count; `unresolvable`, with the cause and the exception's class name when the resolver raised or the returned value's type name when it returned something other than bytes; or `not_attempted`, when no resolver was supplied, the record does not carry the field, or the surface is deferred. The resolver is called only after the signature verifies and after every check that can raise, so a record that fails verification drives no resolution. `transparency` is deferred: its resolution is coordinated in [agentrust-io/trace-tests#92](https://github.com/agentrust-io/trace-tests/issues/92) and stays with the open question in section 7 of the specification.
+
+Three things this does not do. It does not read `references[]`: [§3.1.2](https://trace.agentrust-io.com/spec/trace-v0.2/index.md) rule 3 says a verifier MUST NOT reject a record because an entry in `references` cannot be resolved, and MUST NOT treat a resolved reference as attested evidence; the block is a pointer this check does not follow. It does not take the resolver from the record: a record that names its own checker can name one that agrees with it, so the resolver is yours or there is none. And it does not appraise: `resolved` says bytes were produced and hashed, not that the object was in force or that it binds the record, and no row changes the revocation outcome, the thumbprint, or whether verification raises. Which `appraisal.status` an unresolvable citation carries is the question [#190](https://github.com/agentrust-io/trace-spec/issues/190) holds open, alongside the revocation outcomes in the section below. [`examples/citation-resolution/`](https://github.com/agentrust-io/trace-spec/tree/main/examples/citation-resolution/) carries the conformance vectors, with the cited bytes in hand so every vector is offline.
 
 ## Checking revocation status
 

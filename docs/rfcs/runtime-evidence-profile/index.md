@@ -1,6 +1,6 @@
 # RFC Proposal: runtime evidence, and what a verifier may conclude without it
 
-**Status:** Draft proposal. Binds nothing. **Scope:** A `runtime.evidence` member, the rules for checking it, and the grades a verifier may report. Additive; every v0.2 record stays valid. **Target:** `spec/trace-v0.2.md` §3.1 and §5, for v0.3. **Conformance material:** [`examples/runtime-evidence/`](https://github.com/agentrust-io/trace-spec/tree/main/examples/runtime-evidence): 13 vectors, generator, and reference rules, built on a genuine Intel TDX quote rather than a minted one. **Draft schema:** [`schema/trace-claim-v0.3-draft.json`](https://trace.agentrust-io.com/schema/trace-claim-v0.3-draft.json), generated from `schema/trace-claim.json` with two deliberate boundaries: the v0.3 profile URI and the new `runtime.evidence` member.
+**Status:** Draft proposal. Binds nothing. **Scope:** A `runtime.evidence` member, the rules for checking it, and the grades a verifier may report. Additive; every v0.2 record stays valid. **Target:** `spec/trace-v0.2.md` §3.1 and §5, for v0.3. **Conformance material:** [`examples/runtime-evidence/`](https://github.com/agentrust-io/trace-spec/tree/main/examples/runtime-evidence): 14 vectors, generator, and reference rules, built on a genuine Intel TDX quote rather than a minted one. **Draft schema:** [`schema/trace-claim-v0.3-draft.json`](https://trace.agentrust-io.com/schema/trace-claim-v0.3-draft.json), generated from `schema/trace-claim.json` with two deliberate boundaries: the v0.3 profile URI and the new `runtime.evidence` member.
 
 Requirement keywords are lowercase throughout, deliberately, on the line `CONTRIBUTING.md` draws: normative text lives in `spec/`, informative text binds no implementation. If these rules are adopted they become uppercase there and this file becomes a pointer to where they went. A proposal that writes itself in the imperative is a specification nobody agreed to.
 
@@ -138,7 +138,7 @@ The obvious ladder has two rungs. A third was forced by the artifacts: a record 
 | `platform-attested` | genuine silicon reported this measurement, and the signed record carries the quote proving it | that the record-signing key is trusted or ran inside that TEE, or that this record describes that execution |
 | `attested`          | the above, and the record-signing key is committed to inside the TEE                          | that the key is trusted; that any particular claim in the record is true, per §6.1                          |
 
-These grades describe runtime evidence, not issuer authorization. A relying party still has to establish trust in the `cnf` key independently, as §2 states. The middle row is narrower than it looks and §7.2 shows why.
+These grades describe runtime evidence, not issuer authorization. A relying party still has to establish trust in the `cnf` key independently, as §2 states. The middle row is narrower than it looks and §7.1 shows why.
 
 ### 6.1 A grade on the record is not a grade on its claims
 
@@ -160,27 +160,28 @@ Every vector carries `tag:agentrust-io.com,2026:trace-v0.3`. That is a semantic 
 
 The corpus, summarised rather than transcribed: `python generate.py` prints one row per vector with the full reason for each rejection, and `examples/runtime-evidence/test_appraisal.py` pins those reasons.
 
-| Vector                                     | Result                                                             | Model claim   |
-| ------------------------------------------ | ------------------------------------------------------------------ | ------------- |
-| `accept-real-quote-platform-attested`      | `platform-attested`                                                | self-reported |
-| `accept-collateral-omitted`                | `platform-attested`                                                | self-reported |
-| `reject-collateral-required`               | reject, the declared collateral disagrees with the evidence format | not graded    |
-| `downgrade-evidence-absent`                | `unattested`                                                       | self-reported |
-| `downgrade-evidence-by-reference`          | `unattested`                                                       | self-reported |
-| `downgrade-unsupported-format`             | `unattested`                                                       | self-reported |
-| `reject-forged-quote`                      | reject, the evidence signature or PCK chain did not verify         | not graded    |
-| `reject-measurement-mismatch`              | reject, `runtime.measurement` is not the MRTD in the evidence      | not graded    |
-| `limit-substituted-quote-from-the-same-td` | `platform-attested`, and a limit rather than a success             | self-reported |
-| `reject-evidence-swapped-after-signing`    | reject, the record envelope failed                                 | not graded    |
-| `reject-platform-not-the-evidence`         | reject, the platform is not what this evidence roots               | not graded    |
-| `advisory-binds-cannot-raise-a-claim`      | `platform-attested`                                                | self-reported |
-| `commitment-cannot-attest-model`           | `platform-attested`                                                | self-reported |
+| Vector                                     | Result                                                             | Model claim                                   |
+| ------------------------------------------ | ------------------------------------------------------------------ | --------------------------------------------- |
+| `accept-real-quote-platform-attested`      | `platform-attested`                                                | self-reported                                 |
+| `accept-collateral-omitted`                | `platform-attested`                                                | self-reported                                 |
+| `reject-collateral-required`               | reject, the declared collateral disagrees with the evidence format | not graded                                    |
+| `downgrade-evidence-absent`                | `unattested`                                                       | self-reported                                 |
+| `downgrade-evidence-by-reference`          | `unattested`                                                       | self-reported                                 |
+| `downgrade-unsupported-format`             | `unattested`                                                       | self-reported                                 |
+| `reject-forged-quote`                      | reject, the evidence signature or PCK chain did not verify         | not graded                                    |
+| `reject-measurement-mismatch`              | reject, `runtime.measurement` is not the MRTD in the evidence      | not graded                                    |
+| `limit-substituted-quote-from-the-same-td` | `platform-attested`, and a limit rather than a success             | self-reported                                 |
+| `reject-evidence-swapped-after-signing`    | reject, the record envelope failed                                 | not graded                                    |
+| `reject-platform-not-the-evidence`         | reject, the platform is not what this evidence roots               | not graded                                    |
+| `advisory-binds-cannot-raise-a-claim`      | `platform-attested`                                                | self-reported                                 |
+| `commitment-cannot-attest-model`           | `platform-attested`                                                | self-reported                                 |
+| `context-embedded-key-not-trusted`         | `platform-attested`                                                | self-reported; signer trust `not-established` |
 
-The run closes with `13/13 vectors behaved as the profile says they must (1 of them documenting a limit of the rules rather than a success).`
+The run closes with `14/14 vectors behaved as the profile says they must (1 of them documenting a limit of the rules rather than a success).`
 
 Each vector asserts both the record grade and the model-claim grade, because §6.1 is a claim about the relationship between the two and a corpus that checked only the first would not test it.
 
-The dedicated `runtime-evidence` CI job runs these rules with the external verifier pinned to `agent-manifest` commit `934809709a2815695d65cfacb45dc0a164286046`. It checks the committed grades and the specific reason for each rejection, then regenerates all 13 vectors and compares their bytes. Missing verifier code or missing captures fail that job rather than skipping it. The ordinary TRACE suite checks the schema, the record signatures and the evidence shapes independently, and does not depend on `agent-manifest`.
+The dedicated `runtime-evidence` CI job runs these rules with the external verifier pinned to `agent-manifest` commit `934809709a2815695d65cfacb45dc0a164286046`. It checks the committed grades and the specific reason for each rejection, then regenerates all 14 vectors and compares their bytes. Missing verifier code or missing captures fail that job rather than skipping it. The ordinary TRACE suite checks the schema, the record signatures and the evidence shapes independently, and does not depend on `agent-manifest`.
 
 ### 7.1 What the corpus found
 
@@ -192,13 +193,15 @@ Rule 4 therefore does not do what it appears to do. It binds a record to a *meas
 
 Had the corpus been synthetic, both quotes would have been minted with different measurements and the vector would have passed. The limit is visible only because the artifacts are real and happen to share a TD.
 
-### 7.2 The top grade is currently unreachable
+### 7.2 The top grade, demonstrated once and outside the corpus
 
-No capture this project holds binds a record-signing key. Both TDX quotes bind a manifest digest per §5.2, so `attested` is not reachable from any artifact in the repository, and the corpus reports `platform-attested` on its accept vector rather than the grade the profile is ultimately about.
+The corpus still cannot reach `attested`. Both of its quotes bind a manifest digest per §5.2, so its accept vector reports `platform-attested`, and the manifest from that session was never committed, so their `REPORT_DATA` verifiably came from the TEE and cannot be opened.
 
-Worse, the pre-image behind those bindings is not recoverable either: the manifest from that capture session was never committed, so `REPORT_DATA` in both quotes is a 32-byte value that verifiably came from the TEE and cannot be opened. A verifier can prove something was bound and not what.
+A later capture closes both gaps. On 2026-09-14 a GCP C3 trust domain generated an Ed25519 key, put `sha256(cnf.jwk.x)` followed by 32 zero bytes in `REPORT_DATA`, and signed a v0.3 record carrying the resulting quote (`evidence.binds: "cnf-key"`, `collateral: "embedded"`). The quote, the record and the capture program are published at [agentrust-io.com/verify](https://agentrust-io.com/verify/) ([fixtures](https://github.com/agentrust-io/agentrust-io.github.io/tree/main/verify/fixtures)): `gcp-tdx-2026-09-14-keybind_quote.bin`, 8000 bytes, sha256 `2217b3d640b2e4cdabd34604ea59df7f4ea23ed9702d3ec040689dca20ce1d61`. The pre-image is the public key, and it is in the record.
 
-Both are gaps in the capture procedure rather than in the design, and both are cheap to close on the next TDX run: bind the record-signing key, and publish the pre-image alongside the quote. Until then this proposal's top grade is specified and undemonstrated, and saying so is cheaper than discovering it during adoption.
+`appraise()` in §7's `generate.py`, run on that record with `agent-manifest` at the pinned commit, returns `attested` and reports the model claim as absent. That is the top grade reached by the rules in §4, and no more than §6 says it licenses. The quote signature and PCK chain are checked against the pinned Intel root only; TCB and QE identity are not appraised (§8), and the record says so with `appraisal.status: "none"`. The record makes no model or policy claim: `model.provider` is `none` and `policy.bundle_hash` is the SHA-256 of the empty string. Trust in the key itself still has to come from outside the record (§2).
+
+What is still missing: the capture is not a vector, so the `runtime-evidence` CI job does not check or pin it, and the reference producer does not emit this binding. `agent-manifest` still binds the manifest digest (§5.2), so the top grade is demonstrated by a purpose-built capture program, not by the reference producer.
 
 ## 8. What this does not do
 
