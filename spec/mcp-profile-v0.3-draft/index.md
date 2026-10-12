@@ -2,6 +2,8 @@
 
 Status: proposed requirements, not an adopted profile or implemented wire format. This document does not change TRACE v0.2 verifier acceptance. Field names below describe logical requirements; serialization and a profile identifier remain subject to normative review before implementations claim conformance.
 
+**In plain terms.** This is a proposal for how a TRACE record should describe each tool call an agent makes through MCP (the common protocol agents use to call tools), including which tool list the agent was offered. It is for implementers and reviewers of the next TRACE version. Nothing here is adopted yet, and it does not change what a v0.2 verifier accepts.
+
 ## 1. Scope
 
 This proposal covers evidence for MCP tool-call attempts, including the complete tool declaration set the producer used when selecting and dispatching a call. It targets [MCP 2026-07-28](https://modelcontextprotocol.io/specification/2026-07-28/changelog), which removed protocol sessions and documents OpenTelemetry context propagation. Earlier MCP revisions can supply additional protocol-session metadata; that metadata does not replace the evidence identity defined here.
@@ -45,6 +47,8 @@ Recorded responses MUST be bound to their attempt and exact contents. A response
 ## 6. Acceptance cases for the eventual implementation
 
 These are required test designs, not claims of tests already implemented.
+
+The executable [MCP retry example](https://trace.agentrust-io.com/examples/mcp-retry/index.md) illustrates a subset using a signed v0.2 record and an explicitly local evidence format. Its tests do not implement this proposed profile or settle the choices in section 7.
 
 | Positive control                                         | Negative or boundary case                                 | Required distinction                      |
 | -------------------------------------------------------- | --------------------------------------------------------- | ----------------------------------------- |
